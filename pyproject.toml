@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "fincli"
+version = "1.0.0"
+description = "Personal Finance CLI — track your expenses from the terminal."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Your Name", email = "you@example.com" }]
+
+[project.scripts]
+fincli = "fincli.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ── pytest ─────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-v --tb=short"
+
+# ── ruff ───────────────────────────────────────────────────────────────
+[tool.ruff]
+line-length    = 88
+target-version = "py311"
+src            = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "UP",  # pyupgrade
+  "B",   # flake8-bugbear
+  "C4",  # flake8-comprehensions
+  "SIM", # flake8-simplify
+]
+ignore = ["E501"]  # line too long — handled by formatter
