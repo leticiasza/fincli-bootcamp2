@@ -171,35 +171,13 @@ Versão atual:
 
 ## 👨‍💻 Autor
 
-**Gustavo Barbosa**
-🔗 https://github.com/your-username
+**Leticia Souza**
 
+https://github.com/leticiasza
 ---
 
 ## 🔗 Repositório
 
-https://github.com/your-username/fincli
+https://github.com/leticiasza/fincli.git
 
 ---
-
-## 🔮 Próximos passos (ideias)
-
-* categorias de gastos
-* filtro por data
-* relatório mensal
-* controle de orçamento
-* exportação para CSV
-* interface gráfica (TUI/GUI)
-
----
-
-## 🧠 Sobre o projeto
-
-Este projeto foi desenvolvido como parte de um estudo prático de engenharia de software, com foco em:
-
-* organização de código
-* testes automatizados
-* qualidade e padronização
-* integração contínua
-
-Mais do que um programa, a ideia foi construir um **software simples, mas bem feito**.
