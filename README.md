@@ -178,6 +178,6 @@ https://github.com/leticiasza
 
 ## 🔗 Repositório
 
-https://github.com/leticiasza/fincli.git
+https://github.com/leticiasza/fincli-bootcamp2.git
 
 ---
