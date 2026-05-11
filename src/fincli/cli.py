@@ -1,11 +1,14 @@
 """CLI layer — presentation only, delegates everything to FinanceService."""
 
 import sys
+import urllib.request
+import json
 
 from fincli.adapters import JsonFileRepository
 from fincli.services import FinanceService
 
 _SEPARATOR = "─" * 44
+_API_URL = "https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL"
 
 
 def _build_service() -> FinanceService:
@@ -15,6 +18,21 @@ def _build_service() -> FinanceService:
 
 def _fmt_amount(value: float) -> str:
     return f"R$ {value:,.2f}"
+
+
+def _fetch_rates() -> dict | None:
+    """Busca cotações na AwesomeAPI. Retorna None se falhar."""
+    try:
+        with urllib.request.urlopen(_API_URL, timeout=5) as response:
+            return json.loads(response.read())
+    except Exception:
+        return None
+
+
+def _fmt_variation(pct: str) -> str:
+    value = float(pct)
+    arrow = "+" if value >= 0 else ""
+    return f"{arrow}{value:.2f}%"
 
 
 # ------------------------------------------------------------------ #
@@ -39,16 +57,16 @@ def cmd_add(service: FinanceService, args: list[str]) -> None:
         print(f"[erro] {exc}")
         sys.exit(1)
 
-    print(f"✔  Added: {expense.description} — {_fmt_amount(expense.amount)}")
+    print(f"Adicionado: {expense.description} — {_fmt_amount(expense.amount)}")
 
 
 def cmd_list(service: FinanceService) -> None:
     expenses = service.list_expenses()
     if not expenses:
-        print("No expenses recorded yet.")
+        print("Nenhum gasto registrado ainda.")
         return
     print(_SEPARATOR)
-    print(f"{'#':<4} {'Description':<28} {'Amount':>10}")
+    print(f"{'#':<4} {'Descricao':<28} {'Valor':>10}")
     print(_SEPARATOR)
     for dto in expenses:
         print(f"{dto.index:<4} {dto.description:<28} {_fmt_amount(dto.amount):>10}")
@@ -64,7 +82,7 @@ def cmd_remove(service: FinanceService, args: list[str]) -> None:
     try:
         index = int(args[0])
     except ValueError:
-        print(f"[erro] '{args[0]}' is not a valid index.")
+        print(f"[erro] '{args[0]}' nao e um indice valido.")
         sys.exit(1)
 
     try:
@@ -73,12 +91,41 @@ def cmd_remove(service: FinanceService, args: list[str]) -> None:
         print(f"[erro] {exc}")
         sys.exit(1)
 
-    print(f"✔  Removed: {removed.description} — {_fmt_amount(removed.amount)}")
+    print(f"Removido: {removed.description} — {_fmt_amount(removed.amount)}")
 
 
 def cmd_total(service: FinanceService) -> None:
     total = service.get_total()
-    print(f"Total spent: {_fmt_amount(total)}")
+
+    print(_SEPARATOR)
+    print(f"  Total gasto: {_fmt_amount(total)}")
+    print(_SEPARATOR)
+
+    rates = _fetch_rates()
+    if rates is None:
+        print("  Cotacao indisponivel no momento.")
+        print(_SEPARATOR)
+        return
+
+    usd = rates.get("USDBRL", {})
+    eur = rates.get("EURBRL", {})
+    btc = rates.get("BTCBRL", {})
+
+    if usd.get("bid"):
+        usd_val = total / float(usd["bid"])
+        var_usd = _fmt_variation(usd.get("pctChange", "0"))
+        print(f"  USD: $ {usd_val:,.2f}   (dolar {var_usd} hoje)")
+
+    if eur.get("bid"):
+        eur_val = total / float(eur["bid"])
+        var_eur = _fmt_variation(eur.get("pctChange", "0"))
+        print(f"  EUR: € {eur_val:,.2f}   (euro  {var_eur} hoje)")
+
+    if btc.get("bid"):
+        btc_val = total / float(btc["bid"])
+        print(f"  BTC: ₿ {btc_val:.8f}")
+
+    print(_SEPARATOR)
 
 
 # ------------------------------------------------------------------ #
@@ -86,14 +133,14 @@ def cmd_total(service: FinanceService) -> None:
 # ------------------------------------------------------------------ #
 
 HELP = """
-fincli — Personal Finance CLI  v1.0.0
+fincli — Controle de Financas Pessoais  v1.0.0
 
-Commands:
-  add <description> <amount>   Add a new expense
-  list                         List all expenses
-  remove <index>               Remove expense by index
-  total                        Show total spent
-  help                         Show this help message
+Comandos:
+  add <descricao> <valor>   Adicionar um gasto
+  list                      Listar todos os gastos
+  remove <indice>           Remover gasto pelo indice
+  total                     Ver total gasto com cotacao em tempo real
+  help                      Exibir esta mensagem
 """
 
 
@@ -117,5 +164,5 @@ def main() -> None:
         case "total":
             cmd_total(service)
         case _:
-            print(f"[erro] Unknown command '{command}'. Run 'fincli help'.")
+            print(f"[erro] Comando '{command}' desconhecido. Execute 'fincli help'.")
             sys.exit(1)
