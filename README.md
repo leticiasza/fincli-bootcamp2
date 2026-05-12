@@ -8,6 +8,8 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-green)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
+> **Deploy:** https://github.com/leticiasza/fincli-bootcamp2#como-executar-deploy
+
 ---
 
 ## O problema
