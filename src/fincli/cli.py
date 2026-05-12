@@ -1,8 +1,8 @@
 """CLI layer — presentation only, delegates everything to FinanceService."""
 
-import json
 import sys
 import urllib.request
+import json
 
 from fincli.adapters import JsonFileRepository
 from fincli.services import FinanceService
