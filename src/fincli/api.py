@@ -89,4 +89,3 @@ def get_total():
         if btc.get("bid"):
             result["total_btc"] = round(total / float(btc["bid"]), 8)
     return result
-    
