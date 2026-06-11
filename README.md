@@ -198,3 +198,18 @@ Versao atual: `1.0.0`
 ## Repositorio
 
 https://github.com/leticiasza/fincli-bootcamp2
+
+## 🚀 Deploy
+
+API disponível em: https://fincli-bootcamp2.onrender.com
+
+## 👩‍💻 Integrantes
+
+- Leticia Souza ([@leticiasza](https://github.com/leticiasza))
+
+## 🛠 Tecnologias
+
+- Python 3.13
+- FastAPI + Uvicorn
+- Supabase (PostgreSQL)
+- Render (deploy)
