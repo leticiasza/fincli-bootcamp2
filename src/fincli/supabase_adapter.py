@@ -31,3 +31,4 @@ class SupabaseRepository(ExpenseRepository):
 
     def save(self, book: ExpenseBook) -> None:
         pass
+        
